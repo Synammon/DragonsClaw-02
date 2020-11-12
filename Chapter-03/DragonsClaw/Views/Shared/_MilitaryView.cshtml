@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "Dragon's Claw";
+}
+@model DragonsClaw.Models.TrainingViewModel
+
+<div class="game-content">
+    <div class="header title">
+        <h2>Military</h2>
+    </div>
+    <div id="flavor-text">Blurb about military goes here.</div>
+    <div class="title"></div>
+    <div id="message-container">
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            DragonsClaw.Models.MessageViewModel message = new DragonsClaw.Models.MessageViewModel
+            {
+                Message = Model.Message,
+                Success = true
+            };
+            @Html.Partial("_MessageView", message);
+        }
+    </div>
+    <div>
+        Cadets available @Model.Cadets
+    </div>
+    <form class="form-content" id="training-form" action="/Military/Index" method="POST">
+        <table id="training-table">
+            <thead>
+                <tr id="training-header">
+                    <th id="training-title">Troops</th>
+                    <th id="training-owned">Owned</th>
+                    <th id="training-train">Training</th>
+                    <th id="training-cost">Cost</th>
+                    <th id="training-ore">Ore</th>
+                    <th id="training-dilithium">Dilithium</th>
+                    <th id="training-max">Max</th>
+                    <th id="training-control"></th>
+                </tr>
+            </thead>
+            <tr>
+                <td>@Model.OffensiveTroop</td>
+                <td class="align-right">@Model.Player.OffensiveTroops.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.OffensiveUnits.ToString("N0")</td>
+                <td class="align-right">@Model.OffUnit.CreditCost.ToString("N0")</td>
+                <td class="align-right">0</td>
+                <td class="align-right">0</td>
+                <td class="align-right">@Model.MaxOffensive.ToString("N0")</td>
+                <td><input type="text" name="OffensiveUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillOffense(@Model.MaxOffensive);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>@Model.DefensiveTroop</td>
+                <td class="align-right">@Model.Player.DefensiveTroops.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.DefensiveUnits.ToString("N0")</td>
+                <td class="align-right">@Model.DefUnit.CreditCost.ToString("N0")</td>
+                <td class="align-right">0</td>
+                <td class="align-right">0</td>
+                <td class="align-right">@Model.MaxDefensive.ToString("N0")</td>
+                <td><input type="text" name="DefensiveUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillDefense(@Model.MaxDefensive);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>@Model.SpecialtyTroop</td>
+                <td class="align-right">@Model.Player.SpecialtyTroops.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.SpecialtyUnits.ToString("N0")</td>
+                <td class="align-right">@Model.SpecUnit.CreditCost.ToString("N0")</td>
+                <td class="align-right">0</td>
+                <td class="align-right">0</td>
+                <td class="align-right">@Model.MaxSpecialty.ToString("N0")</td>
+                <td><input type="text" name="SpecialtyUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillSpecialty(@Model.MaxSpecialty);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Fighters (@Const.FighterAttack/0)</td>
+                <td class="align-right">@Model.Player.Fighters.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.FighterUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Fighter.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Fighter.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Fighter.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxFighters.ToString("N0")</td>
+                <td><input type="text" name="FighterUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillFighters(@Model.MaxFighters);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Bombers (@Const.BomberAttack/0)</td>
+                <td class="align-right">@Model.Player.Bombers.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.BomberUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Bomber.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Bomber.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Bomber.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxBombers.ToString("N0")</td>
+                <td><input type="text" name="BomberUnits" class=" troop-control" /> <input type="button" value="Max" onclick="fillBombers(@Model.MaxBombers);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Cruisers (@Const.CruiserAttack.ToString("N0")/@Const.CruiserDefense.ToString("N0"))</td>
+                <td class="align-right">@Model.Player.Cruisers.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.CruiserUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Cruiser.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Cruiser.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Cruiser.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxCruisers.ToString("N0")</td>
+                <td><input type="text" name="CruiserUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillCruisers(@Model.MaxCruisers);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Destroyers (@Const.DestroyerAttack.ToString("N0")/@Const.DestroyerDefense.ToString("N0"))</td>
+                <td class="align-right">@Model.Player.Destroyers.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.DestroyerUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Destroyer.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Destroyer.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Destroyer.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxDestroyers.ToString("N0")</td>
+                <td><input type="text" name="DestroyerUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillDestroyers(@Model.MaxDestroyers);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Dreadnaughts (@Const.DreadnaughtAttack.ToString("N0")/@Const.DreadnaughtDefense.ToString("N0"))</td>
+                <td class="align-right">@Model.Player.Dreadnaughts.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.DreadnaughtUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Dreadnaught.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Dreadnaught.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Dreadnaught.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxDreadnaughts.ToString("N0")</td>
+                <td><input type="text" name="DreadnaughtUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillDreadnaughts(@Model.MaxDreadnaughts);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Spies</td>
+                <td class="align-right">@Model.Player.Spies.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.SpyUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Spy.CreditCost.ToString("N0")</td>
+                <td class="align-right">0</td>
+                <td class="align-right">0</td>
+                <td class="align-right">@Model.MaxSpies.ToString("N0")</td>
+                <td><input type="text" name="SpyUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillSpies(@Model.MaxSpies);" class="troop-button" /></td>
+            </tr>
+            <tr>
+                <td>Raiders</td>
+                <td class="align-right">@Model.Player.Raiders.ToString("N0")</td>
+                <td class="align-right">@Model.InTraining.RaiderUnits.ToString("N0")</td>
+                <td class="align-right">@Model.Raider.CreditCost.ToString("N0")</td>
+                <td class="align-right">@Model.Raider.OreCost.ToString("N0")</td>
+                <td class="align-right">@Model.Raider.DilithiumCost.ToString("N0")</td>
+                <td class="align-right">@Model.MaxRaiders.ToString("N0")</td>
+                <td><input type="text" name="RaiderUnits" class="troop-control" /> <input type="button" value="Max" onclick="fillRaiders(@Model.MaxRaiders);" class="troop-button" /></td>
+            </tr>
+        </table>
+        <input id="train-button" type="button" value="Train Troops" class="small-button large-button" onclick="trainTroops();" />
+    </form>
+</div>
+
